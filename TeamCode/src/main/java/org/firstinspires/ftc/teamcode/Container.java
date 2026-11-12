@@ -36,7 +36,7 @@ public abstract class Container extends LinearOpMode {
 
         //  Intake Initialization
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        //leftIntakeServo = hardwareMap.get(Servo.class, "leftIntakeServo");
+        //leq ftIntakeServo = hardwareMap.get(Servo.class, "leftIntakeServo");
         //rightIntakeServo = hardwareMap.get(Servo.class, "rightIntakeServo");
 
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);

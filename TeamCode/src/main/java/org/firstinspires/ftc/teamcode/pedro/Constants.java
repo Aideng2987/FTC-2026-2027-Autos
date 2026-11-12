@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.pedro;
-
-
-import com.pedropathing.revhub.drivetrains.MecanumConfig;
+import com.pedropathing.revhub.localizers.Encoder;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.pedropathing.revhub.drivetrains.MecanumConfig;
+
 
 
 public class Constants {
-
     public static MecanumConfig drivetrainConfig = new MecanumConfig(
             c -> {
                 c.frontLeftName.set("topLeftWheel");
@@ -20,5 +19,6 @@ public class Constants {
                 c.backRightDirection.set(DcMotorSimple.Direction.REVERSE);
             }
     );
+
 
 }
