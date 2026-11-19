@@ -23,22 +23,23 @@ public class MainTeleOp extends Container { // This extends contianer stuff basi
             driveRobot(y, x, rx); //Container class method
 
             // 3. intake using the  method in Container
-            if (gamepad1.left_trigger > 0.1) {
+            /*if (gamepad1.left_trigger > 0.1) {
                 Intake(gamepad1.left_trigger);
             } else if (gamepad1.dpad_down) {
                 Intake(-0.8);
             } else {
                 Intake(0.0);
-            }
+            }*/
 
             // 4. Shooter using the helper method in Container
+            /*
             if (gamepad1.right_trigger > 0.1) {
                 shoot(gamepad1.right_trigger);
             } else if (gamepad1.dpad_up) {
                 shoot(-0.5);
             } else {
                 shoot(0.0);
-            }
+            }*/
             telemetry.addData("dpad down", "left trigger", "dpad up", "right trigger",
                     gamepad1.dpad_down, gamepad1.left_trigger, gamepad1.dpad_up, gamepad1.right_trigger);
             telemetry.update();

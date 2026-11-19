@@ -35,11 +35,11 @@ public abstract class Container extends LinearOpMode {
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //  Intake Initialization
-        intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
+        //intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
         //leq ftIntakeServo = hardwareMap.get(Servo.class, "leftIntakeServo");
         //rightIntakeServo = hardwareMap.get(Servo.class, "rightIntakeServo");
 
-        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        //intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         //leftIntakeServo.setDirection(Servo.Direction.REVERSE);
         //rightIntakeServo.setDirection(Servo.Direction.REVERSE);
 
@@ -89,12 +89,12 @@ public abstract class Container extends LinearOpMode {
             shooterMotor.setPower(0.0); // Stops only when trigger is released
         }
     }
-    public void Intake(double takeIn){
+    /*public void Intake(double takeIn){
         if(takeIn > 0.1){
             intakeMotor.setPower(takeIn);
         }
         else{
             intakeMotor.setPower(0.0);
         }
-    }
+    }*/
 }
