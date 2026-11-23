@@ -14,7 +14,7 @@ public abstract class Container extends LinearOpMode {
     public DcMotor intakeMotor;
     //public Servo leftIntakeServo;
     //public Servo rightIntakeServo;
-    public DcMotor shooterMotor = null;
+    public DcMotor shooterMotor;
 
     // Call this inside runOpMode() in your TeleOp/Auto classes
     public void initHardware() {

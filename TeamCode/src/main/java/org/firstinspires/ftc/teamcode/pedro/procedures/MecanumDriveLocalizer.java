@@ -29,10 +29,11 @@ public class MecanumDriveLocalizer implements Localizer {
     // 3. WHEEL CONSTANTS (Pre-set for goBILDA 312 RPM 537.7 ticks/rev + 96mm wheels)
     // Inches per tick = (pi * 3.7795) / 537.7 = 0.022083
     public static double FORWARD_INCHES_PER_TICK = 0.022083;
-    // Mecanum rollers lose ~12% efficiency sideways; tweak this after pushing 48" sideways
+    // Mecanum wheels lose ~12% efficiency sideways; tweak this after pushing 48" sideways
     public static double STRAFE_INCHES_PER_TICK = 0.0195;
 
     // Flip to -1 if pushing the robot forward makes that wheel's ticks go negative
+    // Also errors could be here
     public static int FL_SIGN = 1;
     public static int BL_SIGN = 1;
     public static int FR_SIGN = 1;
@@ -84,6 +85,7 @@ public class MecanumDriveLocalizer implements Localizer {
         double dt = (now - lastUpdateNanos) / 1e9;
         lastUpdateNanos = now;
 
+        // errors are right here probably because we couldn't test the robot
         int curFl = fl.getCurrentPosition() * FL_SIGN;
         int curBl = bl.getCurrentPosition() * BL_SIGN;
         int curFr = fr.getCurrentPosition() * FR_SIGN;
@@ -129,7 +131,7 @@ public class MecanumDriveLocalizer implements Localizer {
         setPose(Pose.zero());
     }
 
-    private void resetEncoders() {
+    private void resetEncoders() {  // Most plausible error right here
         lastFl = fl.getCurrentPosition() * FL_SIGN;
         lastBl = bl.getCurrentPosition() * BL_SIGN;
         lastFr = fr.getCurrentPosition() * FR_SIGN;
