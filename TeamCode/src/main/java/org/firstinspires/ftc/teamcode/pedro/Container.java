@@ -1,100 +1,145 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.pedro;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.pedropathing.ivy.Command;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.sequential;
+import com.pedropathing.api.Paths;
+import com.pedropathing.api.PoseFactory;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
+import static com.pedropathing.ivy.groups.Groups.parallel;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 
-public abstract class Container extends LinearOpMode {
-    // Drivetrain hardware
-    public DcMotor frontLeft;
-    public DcMotor backLeft;
-    public DcMotor frontRight;
-    public DcMotor backRight;
-    // Intake hardware
-    public DcMotor intakeMotor;
-    //public Servo leftIntakeServo;
-    //public Servo rightIntakeServo;
+public class Container {
+    // Drivetrain
+    public DcMotor frontLeft, backLeft, frontRight, backRight;
+
+    // Mechanisms
     public DcMotor shooterMotor;
-//test comment for commit
-    // Call this inside runOpMode() in your TeleOp/Auto classes
-    public void initHardware() {
-        // drivetrain initialzation
-        frontLeft = hardwareMap.get(DcMotor.class, "topLeftWheel");
-        backLeft = hardwareMap.get(DcMotor.class, "bottomLeftWheel");
-        frontRight = hardwareMap.get(DcMotor.class, "topRightWheel");
-        backRight = hardwareMap.get(DcMotor.class, "bottomRightWheel");
+    public DcMotor intakeMotor;
+    public CRServo leftIntakeServo;
+    public CRServo rightIntakeServo;
+    private final PoseFactory p = PoseFactory.degrees();
+    public final Pose start          = p.of(58.75, 13.75, 90);
+    public final Pose shoot          = p.of(58.75, 12.75, 90);
+    public final Pose intake         = p.of(12.75, 10.75, 180);
+    public final Pose turn           = p.of(17.75, 21.75, 180);
+    public final Pose shootAgain     = p.of(58.75, 13.75, 90);
+    public final Pose bumpIntoFlower = p.of(14.75, 43.75, -34.2869);
+    public final Pose parking        = p.of(10.75, 100.75, -85.9858);
+
+    public Path shootPath()          { return Paths.line(start, shoot).linear(start, shoot); }
+    public Path intakePath()         { return Paths.line(shoot, intake).constant(intake); }
+    public Path turnPath()           { return Paths.line(intake, turn).constant(turn); }
+    public Path shootAgainPath()     { return Paths.line(turn, shootAgain).constant(shootAgain); }
+    public Path bumpIntoFlowerPath() { return Paths.line(shootAgain, bumpIntoFlower).reverseTangent(); }
+    public Path parkingPath()        { return Paths.line(bumpIntoFlower, parking).reverseTangent(); }
+
+
+    // Call in  TeleOp and Auto
+    public void initMechanisms(HardwareMap hw) {
+        shooterMotor = hw.get(DcMotor.class, "shooterMotor");
+        shooterMotor.setDirection(DcMotor.Direction.FORWARD);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        intakeMotor = hw.get(DcMotor.class, "intakeMotor");
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftIntakeServo = hw.get(CRServo.class, "leftIntakeServo");
+        rightIntakeServo = hw.get(CRServo.class, "rightIntakeServo");
+        leftIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    // Call ONLY in TeleOp (Pedro Pathing handles drivetrain in Auto)
+    public void initDrivetrain(HardwareMap hw) {
+        frontLeft = hw.get(DcMotor.class, "topLeftWheel");
+        backLeft = hw.get(DcMotor.class, "bottomLeftWheel");
+        frontRight = hw.get(DcMotor.class, "topRightWheel");
+        backRight = hw.get(DcMotor.class, "bottomRightWheel");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
 
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        //  Intake Initialization
-        //intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        //leq ftIntakeServo = hardwareMap.get(Servo.class, "leftIntakeServo");
-        //rightIntakeServo = hardwareMap.get(Servo.class, "rightIntakeServo");
-
-        //intakeMotor.setDirection(DcMotor.Direction.FORWARD);
-        //leftIntakeServo.setDirection(Servo.Direction.REVERSE);
-        //rightIntakeServo.setDirection(Servo.Direction.REVERSE);
-
-        //intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        shooterMotor = hardwareMap.get(DcMotor.class, "shooterMotor");
-
-        // Set direction (REVERSE if the intake runs backwards relative to controller input)
-        shooterMotor.setDirection(DcMotor.Direction.FORWARD);
-
-        // Set motor to brake when no power is applied
-        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
     }
 
     public void driveRobot(double y, double x, double rx) {
-        double frontLeftPower  = (y + x) + (rx);
-        double backLeftPower   = (y - x) + (rx);
-        double frontRightPower = (y - x) - (rx);
-        double backRightPower  = (y + x) - (rx);
+        double fl = (y + x) + rx;
+        double bl = (y - x) + rx;
+        double fr = (y - x) - rx;
+        double br = (y + x) - rx;
 
-        double max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        max = Math.max(max, Math.abs(backLeftPower));
-        max = Math.max(max, Math.abs(backRightPower));
+        double max = Math.max(Math.abs(fl), Math.abs(fr));
+        max = Math.max(max, Math.abs(bl));
+        max = Math.max(max, Math.abs(br));
 
         if (max > 1.0) {
-            frontLeftPower /= max;
-            backLeftPower /= max;
-            frontRightPower /= max;
-            backRightPower /= max;
+            fl /= max;
+            bl /= max;
+            fr /= max;
+            br /= max;
         }
-
-        frontLeft.setPower(frontLeftPower);
-        backLeft.setPower(backLeftPower);
-        frontRight.setPower(frontRightPower);
-        backRight.setPower(-backRightPower);
-
-        telemetry.addData("Drive Vectors", "Y: %.2f, X: %.2f, RX: %.2f", y, x, rx);
-        telemetry.addData("Motor Powers", "FL: %.2f, FR: %.2f, BL: %.2f, BR: %.2f",
-                frontLeftPower, frontRightPower, backLeftPower, backRightPower);
-        telemetry.update();
+        frontLeft.setPower(fl);
+        backLeft.setPower(bl);
+        frontRight.setPower(fr);
+        backRight.setPower(br);
     }
-    public void shoot(double shotPower){
-        if (shotPower > 0.1) {
-            shooterMotor.setPower(1); // Spins when trigger is pulled
-        } else {
-            shooterMotor.setPower(0.0); // Stops only when trigger is released
-        }
+
+    public void shoot(double shotPower) {
+        shooterMotor.setPower(Math.abs(shotPower));
     }
-    /*public void Intake(double takeIn){
-        if(takeIn > 0.1){
-            intakeMotor.setPower(takeIn);
-        }
-        else{
-            intakeMotor.setPower(0.0);
-        }
-    }*/
+
+    public void intake(double power) {
+        intakeMotor.setPower(power);
+        leftIntakeServo.setPower((power));
+        rightIntakeServo.setPower((power));
+    }
+
+    public Command shootForMs(long ms) {
+        return sequential(
+                instant(() -> shoot(1.0)),
+                waitMs(ms),
+                instant(() -> shoot(0.0))
+        );
+    }
+
+    public Command intakeForMs(long ms, double power) {
+        return sequential(
+                instant(() -> intake(power)),
+                waitMs(ms),
+                instant(() -> intake(0.0))
+        );
+    }
+    public Command autoRoutine(Follower follower) {
+        return sequential(
+                follow(follower, shootPath()),
+                shootForMs(1500),
+                parallel(
+                        sequential(
+                                follow(follower, intakePath()),
+                                follow(follower, turnPath())
+                        ),
+                        intakeForMs(3000, 1.0)
+                ),
+                follow(follower, shootAgainPath()),
+                shootForMs(1500),
+                follow(follower, bumpIntoFlowerPath()),
+                follow(follower, parkingPath())
+        );
+    }
+
 }
