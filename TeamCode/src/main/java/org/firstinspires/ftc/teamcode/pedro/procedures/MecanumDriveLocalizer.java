@@ -13,20 +13,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MecanumDriveLocalizer implements Localizer {
 
-    // 1. MOTOR & IMU NAMES (Must match your Robot Configuration on the Driver Station)
+    // MOTOR & IMU NAMES (must match your Robot Configuration on the Driver Station)
     private static final String FRONT_LEFT_NAME = "topLeftWheel";
     private static final String BACK_LEFT_NAME = "bottomLeftWheel";
     private static final String FRONT_RIGHT_NAME = "topRightWheel";
     private static final String BACK_RIGHT_NAME = "bottomRightWheel";
     private static final String IMU_NAME = "imu";
 
-    // 2. CONTROL HUB ORIENTATION (Change if your hub isn't mounted flat with logo facing UP)
+    // definetly need to change this cus robot isn't done
     private static final RevHubOrientationOnRobot.LogoFacingDirection LOGO_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
     private static final RevHubOrientationOnRobot.UsbFacingDirection USB_DIR =
             RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
-    // 3. WHEEL CONSTANTS (Pre-set for goBILDA 312 RPM 537.7 ticks/rev + 96mm wheels)
+    // WHEEL CONSTANTS  for goBILDA 312 RPM 537.7 ticks/rev + 96mm wheels
     // Inches per tick = (pi * 3.7795) / 537.7 = 0.022083
     public static double FORWARD_INCHES_PER_TICK = 0.022083;
     // Mecanum wheels lose ~12% efficiency sideways; tweak this after pushing 48" sideways
@@ -84,28 +84,26 @@ public class MecanumDriveLocalizer implements Localizer {
         long now = System.nanoTime();
         double dt = (now - lastUpdateNanos) / 1e9;
         lastUpdateNanos = now;
+        int currentFrontLeft = fl.getCurrentPosition() * FL_SIGN;
+        int currentBackleft = bl.getCurrentPosition() * BL_SIGN;
+        int currentFrontright = fr.getCurrentPosition() * FR_SIGN;
+        int currentBackright = br.getCurrentPosition() * BR_SIGN;
 
-        // errors are right here probably because we couldn't test the robot
-        int curFl = fl.getCurrentPosition() * FL_SIGN;
-        int curBl = bl.getCurrentPosition() * BL_SIGN;
-        int curFr = fr.getCurrentPosition() * FR_SIGN;
-        int curBr = br.getCurrentPosition() * BR_SIGN;
+        int dFl = currentFrontLeft - lastFl;
+        int dBl = currentBackleft - lastBl;
+        int dFr = currentFrontright - lastFr;
+        int dBr = currentBackright - lastBr;
 
-        int dFl = curFl - lastFl;
-        int dBl = curBl - lastBl;
-        int dFr = curFr - lastFr;
-        int dBr = curBr - lastBr;
+        lastFl = currentFrontLeft;
+        lastBl = currentBackleft;
+        lastFr = currentFrontright;
+        lastBr = currentBackright;
 
-        lastFl = curFl;
-        lastBl = curBl;
-        lastFr = curFr;
-        lastBr = curBr;
-
-        // Robot-frame movement (+X = forward, +Y = left)
+        // Robot-frame movement
         double dForward = ((dFl + dBl + dFr + dBr) / 4.0) * FORWARD_INCHES_PER_TICK;
         double dStrafe = ((-dFl + dBl + dFr - dBr) / 4.0) * STRAFE_INCHES_PER_TICK;
 
-        // Heading from IMU (+heading = counterclockwise)
+        // Heading from IMU
         double rawHeading = getRawImuHeading();
         double dHeading = AngleUnit.normalizeRadians(rawHeading - lastRawHeading);
         lastRawHeading = rawHeading;
@@ -131,7 +129,7 @@ public class MecanumDriveLocalizer implements Localizer {
         setPose(Pose.zero());
     }
 
-    private void resetEncoders() {  // Most plausible error right here
+    private void resetEncoders() {
         lastFl = fl.getCurrentPosition() * FL_SIGN;
         lastBl = bl.getCurrentPosition() * BL_SIGN;
         lastFr = fr.getCurrentPosition() * FR_SIGN;

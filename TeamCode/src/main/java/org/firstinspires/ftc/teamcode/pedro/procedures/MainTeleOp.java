@@ -23,34 +23,57 @@ public class MainTeleOp extends LinearOpMode {
         follower.setPose(robot.start);
         follower.update();
         robot.initMechanisms(hardwareMap);
+        robot.initDrivetrain(hardwareMap);
 
         waitForStart();
 
         while (opModeIsActive()) {
-
+            follower.update();
+            Scheduler.execute();
             boolean autoRunning = (auto != null && auto.isScheduled());
+            double y  = -gamepad1.left_stick_y;
+            double x  =  gamepad1.left_stick_x;
+            double rx =  gamepad1.right_stick_x;
+            double intake1 = gamepad1.left_trigger;
+            double fire = gamepad1.right_trigger;
 
-            if(gamepad1.a && (!autoRunning)){
+            if (gamepad1.a && !autoRunning) {
                 follower.setPose(robot.start);
                 auto = robot.autoRoutine(follower);
                 schedule(auto);
+                autoRunning = true;
             }
-            else{
-                robot.driveRobot(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            // intake: Left Trigger = in d-pad Down = out
-            if (gamepad1.left_trigger > 0.1) {
-                robot.intake(gamepad1.left_trigger);
-            } else if (gamepad1.dpad_down) {
-                robot.intake(-0.8);
-            } else {
+
+            // 3. Press B or move sticks to immediately abort auto and return to manual driving
+
+            boolean sticksMoved = Math.abs(y) > 0.1 || Math.abs(x) > 0.1 || Math.abs(rx) > 0.1;
+            if (autoRunning && (gamepad1.b || sticksMoved)) {
+                Scheduler.reset();
                 robot.intake(0.0);
+                robot.shoot(0.0);
+                auto = null;
+                autoRunning = false;
             }
 
-            // Shooter: right Trigger = shoot
-            robot.shoot(gamepad1.right_trigger);}
+            // 4. Manual driving & mechanisms ONLY when auto is not active
+            if (!autoRunning) {
+                robot.driveRobot(y, x, rx);
+                if (intake1 > 0.1) {
+                    robot.intake(intake1);
+                } else if (gamepad1.dpad_down) {
+                    robot.intake(-0.8);
+                } else {
+                    robot.intake(0.0);
+                }
 
-            telemetry.addData("Inputs", "L-Trig:  R-Trig: | D-Down: ",
-                    gamepad1.left_trigger, gamepad1.right_trigger, gamepad1.dpad_down);
+                // Shooter: Right Trigger = shoot
+                if(fire > 0.1){
+                robot.shoot(fire);}
+                else{
+                    robot.shoot(0.0);
+                }
+            }
+            telemetry.addData("Status", "Right Trigger: %.2f | Auto Running: %b", gamepad1.right_trigger, autoRunning);
             telemetry.update();
         }
     }

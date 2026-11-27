@@ -26,6 +26,7 @@ public class Container {
     public DcMotor intakeMotor;
     public CRServo leftIntakeServo;
     public CRServo rightIntakeServo;
+    public CRServo mainIntakeServo;
     private final PoseFactory p = PoseFactory.degrees();
     public final Pose start          = p.of(58.75, 13.75, 90);
     public final Pose shoot          = p.of(58.75, 12.75, 90);
@@ -57,6 +58,8 @@ public class Container {
         rightIntakeServo = hw.get(CRServo.class, "rightIntakeServo");
         leftIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        mainIntakeServo = hw.get(CRServo.class, "mainIntakeServo");
+        mainIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     // Call ONLY in TeleOp (Pedro Pathing handles drivetrain in Auto)
@@ -65,7 +68,6 @@ public class Container {
         backLeft = hw.get(DcMotor.class, "bottomLeftWheel");
         frontRight = hw.get(DcMotor.class, "topRightWheel");
         backRight = hw.get(DcMotor.class, "bottomRightWheel");
-
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
@@ -100,13 +102,14 @@ public class Container {
     }
 
     public void shoot(double shotPower) {
-        shooterMotor.setPower(Math.abs(shotPower));
+        shooterMotor.setPower(shotPower);
     }
 
-    public void intake(double power) {
+    public void intake(double power){
         intakeMotor.setPower(power);
-        leftIntakeServo.setPower((power));
+        leftIntakeServo.setPower(-(power));
         rightIntakeServo.setPower((power));
+        mainIntakeServo.setPower(power);
     }
 
     public Command shootForMs(long ms) {
