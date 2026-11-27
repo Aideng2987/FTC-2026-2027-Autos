@@ -29,10 +29,10 @@ public class Container {
     public CRServo mainIntakeServo;
     private final PoseFactory p = PoseFactory.degrees();
     public final Pose start          = p.of(58.75, 13.75, 90);
-    public final Pose shoot          = p.of(58.75, 12.75, 90);
+    public final Pose shoot          = p.of(58.75, 12.75, 270);
     public final Pose intake         = p.of(12.75, 10.75, 180);
     public final Pose turn           = p.of(17.75, 21.75, 180);
-    public final Pose shootAgain     = p.of(58.75, 13.75, 90);
+    public final Pose shootAgain     = p.of(58.75, 13.75, 270);
     public final Pose bumpIntoFlower = p.of(14.75, 43.75, -34.2869);
     public final Pose parking        = p.of(10.75, 100.75, -85.9858);
 
@@ -130,6 +130,7 @@ public class Container {
     public Command autoRoutine(Follower follower) {
         return sequential(
                 follow(follower, shootPath()),
+                waitMs(2000.0),
                 shootForMs(1500),
                 parallel(
                         sequential(
@@ -139,6 +140,7 @@ public class Container {
                         intakeForMs(3000, 1.0)
                 ),
                 follow(follower, shootAgainPath()),
+                waitMs(2000.0),
                 shootForMs(1500),
                 follow(follower, bumpIntoFlowerPath()),
                 follow(follower, parkingPath())

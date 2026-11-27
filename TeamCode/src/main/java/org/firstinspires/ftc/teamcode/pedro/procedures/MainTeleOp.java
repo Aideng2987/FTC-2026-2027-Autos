@@ -44,7 +44,7 @@ public class MainTeleOp extends LinearOpMode {
                 autoRunning = true;
             }
 
-            // 3. Press B or move sticks to immediately abort auto and return to manual driving
+            //  Press B or move sticks to immediately abort auto and return to manual driving
 
             boolean sticksMoved = Math.abs(y) > 0.1 || Math.abs(x) > 0.1 || Math.abs(rx) > 0.1;
             if (autoRunning && (gamepad1.b || sticksMoved)) {
@@ -55,7 +55,7 @@ public class MainTeleOp extends LinearOpMode {
                 autoRunning = false;
             }
 
-            // 4. Manual driving & mechanisms ONLY when auto is not active
+            // Manual driving & mechanisms ONLY when auto is not active
             if (!autoRunning) {
                 robot.driveRobot(y, x, rx);
                 if (intake1 > 0.1) {
@@ -73,7 +73,7 @@ public class MainTeleOp extends LinearOpMode {
                     robot.shoot(0.0);
                 }
             }
-            telemetry.addData("Status", "Right Trigger: %.2f | Auto Running: %b", gamepad1.right_trigger, autoRunning);
+            telemetry.addData("Status", "Right Trigger: %.2f | Auto Running: %b | %.2f Current pose", gamepad1.right_trigger, autoRunning, follower);
             telemetry.update();
         }
     }

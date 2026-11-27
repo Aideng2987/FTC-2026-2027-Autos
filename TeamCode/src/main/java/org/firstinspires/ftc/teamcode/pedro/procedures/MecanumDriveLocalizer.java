@@ -99,7 +99,7 @@ public class MecanumDriveLocalizer implements Localizer {
         lastFr = currentFrontright;
         lastBr = currentBackright;
 
-        // Robot-frame movement
+        // frame movement
         double dForward = ((dFl + dBl + dFr + dBr) / 4.0) * FORWARD_INCHES_PER_TICK;
         double dStrafe = ((-dFl + dBl + dFr - dBr) / 4.0) * STRAFE_INCHES_PER_TICK;
 
