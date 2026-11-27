@@ -73,7 +73,7 @@ public class MainTeleOp extends LinearOpMode {
                     robot.shoot(0.0);
                 }
             }
-            telemetry.addData("Status", "Right Trigger: %.2f | Auto Running: %b | %.2f Current pose", gamepad1.right_trigger, autoRunning, follower);
+            telemetry.addData("Status", "Right Trigger: %.2f | Auto Running: %b", gamepad1.right_trigger, autoRunning, follower);
             telemetry.update();
         }
     }

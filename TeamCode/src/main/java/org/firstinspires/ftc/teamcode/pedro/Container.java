@@ -103,7 +103,7 @@ public class Container {
     }
 
     public void shoot(double shotPower) {
-        shooterMotor.setPower(shotPower);
+        shooterMotor.setPower(shotPower/1.25);
     }
     // probably need to tune this so that we don't overshoot with the power and maybe we can get a warm going
 
@@ -116,7 +116,7 @@ public class Container {
 
     public Command shootForMs(long ms) {
         return sequential(
-                instant(() -> shoot(1.0)),
+                instant(() -> shoot(0.8)),
                 waitMs(ms),
                 instant(() -> shoot(0.0))
         );
