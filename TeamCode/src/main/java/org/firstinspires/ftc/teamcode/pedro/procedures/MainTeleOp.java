@@ -36,7 +36,7 @@ public class MainTeleOp extends LinearOpMode {
             double rx =  gamepad1.right_stick_x;
             double intake1 = gamepad1.left_trigger;
             double fire = gamepad1.right_trigger;
-
+            // press a to start the auto
             if (gamepad1.a && !autoRunning) {
                 follower.setPose(robot.start);
                 auto = robot.autoRoutine(follower);
@@ -55,7 +55,7 @@ public class MainTeleOp extends LinearOpMode {
                 autoRunning = false;
             }
 
-            // Manual driving & mechanisms ONLY when auto is not active
+            // Manual driving & mechanisms only when auto is not active
             if (!autoRunning) {
                 robot.driveRobot(y, x, rx);
                 if (intake1 > 0.1) {
@@ -66,7 +66,7 @@ public class MainTeleOp extends LinearOpMode {
                     robot.intake(0.0);
                 }
 
-                // Shooter: Right Trigger = shoot
+                // Shooter right trigger = shoot
                 if(fire > 0.1){
                 robot.shoot(fire);}
                 else{

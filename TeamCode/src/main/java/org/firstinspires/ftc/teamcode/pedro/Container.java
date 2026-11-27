@@ -62,7 +62,7 @@ public class Container {
         mainIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    // Call ONLY in TeleOp (Pedro Pathing handles drivetrain in Auto)
+    // Calling only  in TeleOp
     public void initDrivetrain(HardwareMap hw) {
         frontLeft = hw.get(DcMotor.class, "topLeftWheel");
         backLeft = hw.get(DcMotor.class, "bottomLeftWheel");
@@ -80,6 +80,7 @@ public class Container {
     }
 
     public void driveRobot(double y, double x, double rx) {
+        // the standard dive train stuff
         double fl = (y + x) + rx;
         double bl = (y - x) + rx;
         double fr = (y - x) - rx;
@@ -104,6 +105,7 @@ public class Container {
     public void shoot(double shotPower) {
         shooterMotor.setPower(shotPower);
     }
+    // probably need to tune this so that we don't overshoot with the power and maybe we can get a warm going
 
     public void intake(double power){
         intakeMotor.setPower(power);
@@ -132,7 +134,7 @@ public class Container {
                 follow(follower, shootPath()),
                 waitMs(2000.0),
                 shootForMs(1500),
-                parallel(
+                parallel( // this is stuff that we do while doing smt else. Kinda multi taksing the robot
                         sequential(
                                 follow(follower, intakePath()),
                                 follow(follower, turnPath())
